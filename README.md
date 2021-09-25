@@ -1,6 +1,7 @@
 ## 缔昂后台框架
 目录结构
 ---
+```
 teownFramework
 ├── README.md
 ├── application // 业务逻辑目录
@@ -21,8 +22,7 @@ teownFramework
 │   └── include // 公共工具
 │       └── Output.php // 输出工具
 ├── index.php // 框架入口文件
-
-
+```
 使用
 ---
 1. 控制类的命名规范 *Controller
