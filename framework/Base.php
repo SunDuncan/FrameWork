@@ -1,4 +1,12 @@
 <?php
+/*
+ * @Description: 
+ * @version: 
+ * @Author: SunDuncan
+ * @Date: 2021-09-25 13:30:33
+ * @LastEditors: SunDuncan
+ * @LastEditTime: 2021-10-15 17:18:08
+ */
 /**
  * Author: SunDuncan
  */
@@ -54,23 +62,30 @@
 
     private function getRequestParams() {
 
-        // echo "<pre>";
-        // print_r($_SERVER);
-        // print_r(parse_url($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']));
-        // 当前的模块
-        $defPlate = $GLOBALS['config']['app']['default_platform'];
-        $p  = isset($_GET['p']) ? $_GET['p'] : $defPlate;
-        define("PLATFORM", $p);
-        // 当前控制器
-        $defController = $GLOBALS['config'][PLATFORM]['default_controller'];
-        $c  = isset($_GET['c']) ? $_GET['c'] : $defController;
-        define("CONTROLLER", $c);
+        // 这边来解析路由
+        if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO']) {
+            $path_info_array = explode("/", $_SERVER['PATH_INFO']);
+            if (count($path_info_array) < 3) {
+                die("没找到合适的路由模块");
+            }
+            /**
+             * 需要去查看是否有这个
+             */
 
-        // 当前的方法
-        $defAction = $GLOBALS['config'][PLATFORM]['default_action'];
-        $a  = isset($_GET['a']) ? $_GET['a'] : $defAction;
-        define("ACTION", $a);
-
+            define("PLATFORM", $path_info_array[1]);
+            define("CONTROLLER", $path_info_array[2]);
+            define("ACTION", $path_info_array[3]);
+        } else {
+            $defModule = $GLOBALS['config']['app']['default_module'];
+            $s = isset($_GET['s']) ? $_GET['s'] : $defModule;
+            $base_url_array = explode("/", $s);
+            define("PLATFORM", $base_url_array[0]);
+            // 当前控制器
+            define("CONTROLLER", $base_url_array[1]);
+    
+            // 当前的方法
+            define("ACTION", $base_url_array[2]);
+        }
     }
 
 

@@ -1,4 +1,12 @@
 <?php
+/*
+ * @Description: 
+ * @version: 
+ * @Author: SunDuncan
+ * @Date: 2021-09-25 13:28:59
+ * @LastEditors: SunDuncan
+ * @LastEditTime: 2021-10-15 17:15:07
+ */
 /**
  * Author: SunDuncan
  */
@@ -15,12 +23,6 @@ return array(
 
     // 应用的整体配置
     "app" => [
-        "default_platform" => 'api',
-    ],
-
-    // 接口的默认配置
-    "api" => [
-        "default_controller" => "Index",
-        'default_action' => "index" 
+        'default_module' => 'api/Index/index'
     ]
 );
