@@ -1,4 +1,12 @@
 <?php
+/*
+ * @Description: 
+ * @version: 
+ * @Author: SunDuncan
+ * @Date: 2021-09-25 16:42:24
+ * @LastEditors: SunDuncan
+ * @LastEditTime: 2021-10-19 16:28:18
+ */
 /**
  * Author: SunDuncan
  */
@@ -19,14 +27,39 @@ class Model {
         $this->dB = Db::getInstance($dbConfig);
     }
 
-    public function getAll() {
+    public function selectAll() {
         $sql = "SELECT *from {$this->tableName}";
         return $this->dB->fetchAll($sql);
     }
 
-    public function get($id) {
+    public function find($id, $where = [], $limit = "", $order = "") {
         $sql = "SELECT *from {$this->tableName} where id = {$id}";
         return $this->dB->fetch($sql);
+    }
+
+    public function add($data) {
+        if (!is_array($data)) {
+            return false;
+        }
+
+        if (count($data) < 1) {
+            return false;
+        }
+
+        $count = 0;
+        $sql = "INSERT INTO {$this->tableName}";
+        foreach ($data as $k => $value) {
+            if ($count == 0) {
+                $sql .= " set `{$k}` = {$value}";
+            } 
+
+            if ($count > 0) {
+                $sql .= ",set `{$k}` = {$value}";
+            }
+
+            $count++;
+        }
+        return $this->dB->add($sql);
     }
 }
 

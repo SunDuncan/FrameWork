@@ -75,7 +75,7 @@ class Db{
     /**
      * 新增，更新，删除
      */
-    public function exec($sql) {
+    protected function exec($sql) {
         $num = $this->conn->exec($sql);
         if ($num > 0) {
             // 如果是新增的操作
@@ -106,4 +106,12 @@ class Db{
         return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
+
+    /**
+     * 封装一下插入的操作
+     */
+    public function add($sql) {
+        $this->exec($sql);
+        return $this->insertId;
+    }
 }

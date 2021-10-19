@@ -5,7 +5,7 @@
  * @Author: SunDuncan
  * @Date: 2021-10-15 18:19:46
  * @LastEditors: SunDuncan
- * @LastEditTime: 2021-10-15 18:22:36
+ * @LastEditTime: 2021-10-19 18:22:52
  */
 class Utils {
     /**
@@ -51,7 +51,7 @@ class Utils {
                 {
                     if (is_dir("$path/$item"))
                     {
-                        CommonUtils::delFolder("$path/$item", $delDir);
+                        Utils::delFolder("$path/$item", $delDir);
                     } else
                     {
                         unlink("$path/$item");
@@ -206,7 +206,7 @@ class Utils {
     {
         $uid = uniqid("", true);
         $data = $namespace;
-        $data .= CommonUtils::ipAddress();
+        $data .= Utils::ipAddress();
 
         if (isset($_SERVER['REQUEST_TIME']))
         {
@@ -348,7 +348,7 @@ class Utils {
     public static function urlJoint($uri, $data)
     {
         $joint = $uri;
-        $kv = CommonUtils::arrayToKeyValPair($data);
+        $kv = Utils::arrayToKeyValPair($data);
         if (strlen($kv) > 0)
         {
         	if(sizeof(explode('?',$uri)) > 1)
@@ -430,7 +430,7 @@ class Utils {
             $sendData = null;
             if (is_array($data))
             {
-                $sendData = CommonUtils::arrayToKeyValPair($data);
+                $sendData = Utils::arrayToKeyValPair($data);
             } else
             {
                 $sendData = $data;
@@ -438,7 +438,7 @@ class Utils {
             curl_setopt($ch, CURLOPT_POSTFIELDS, $sendData);
         } else
         {
-            $uri = CommonUtils::urlJoint($uri, $data);
+            $uri = Utils::urlJoint($uri, $data);
             curl_setopt($ch, CURLOPT_URL, $uri);
         }
 
