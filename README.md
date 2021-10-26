@@ -71,13 +71,13 @@ teownFramework
 
 2. lnmp环境，主要是关于nginx的配置，需要在nginx,rewrite重写路由,下面是样例，请根据自己环境进行重新配置
 ```
-        location ~ ^/(.*)/index.php {
-			root www;
-			fastcgi_pass     127.0.0.1:9000;
-            fastcgi_param    SCRIPT_FILENAME $document_root$fastcgi_script_name;
-            include          fastcgi_params;
-			rewrite ^/(.*)/index.php/(.*) /$1/index.php?s=$2 last;         
-		}
+      set $path_info "";
+      set $real_script_name $fastcgi_script_name;
+      if ($fastcgi_script_name ~ "^(.+?\.php)(/.+)$")
+  	{
+		set $real_script_name $1;
+		set $path_info $2;
+	}
 ```
 
 
