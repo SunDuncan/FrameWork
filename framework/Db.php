@@ -133,15 +133,11 @@ class Db{
     
             }
 
-            $execData[":name"] = "dasdas";
-            $execData[":age"] = 13;
-            $execData[":status"] = "0";
-
             $stmt = $this->conn->prepare($sql);
             $res = $stmt->execute($execData);
             if ($res > 0) {
-                if (null != $this->conn->lastInsertId) {
-                    $this->insertId = $this->conn->lastInsertId;
+                if (null != $this->conn->lastInsertId()) {
+                    $this->insertId = $this->conn->lastInsertId();
                 }
                 $this->num = $res;
             } else {

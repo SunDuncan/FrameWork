@@ -5,7 +5,7 @@
  * @Author: SunDuncan
  * @Date: 2021-09-25 16:14:42
  * @LastEditors: SunDuncan
- * @LastEditTime: 2021-10-26 18:51:19
+ * @LastEditTime: 2021-10-26 19:16:13
  */
 
 class IndexController extends Controller{
@@ -20,5 +20,7 @@ class IndexController extends Controller{
             'age' => 1,
             'status' => 0
         ]);
+
+        echo $res;
     }
 }
