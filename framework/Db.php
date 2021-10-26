@@ -65,6 +65,10 @@ class Db{
 
           // 设置客户端的字符集
           $this->conn->query("SET NAMES {$this->dbConfig['charset']}");
+          
+          // 设置默认的查询返回的类型
+          $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+          $this->conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
       } catch(PDOException $e) {
           die("数据库连接失败" . $e->getMessage());
       }
@@ -75,22 +79,82 @@ class Db{
     /**
      * 新增，更新，删除
      */
-    protected function exec($sql) {
-        $num = $this->conn->exec($sql);
-        if ($num > 0) {
-            // 如果是新增的操作
-            if (null != $this->conn->lastInsertId()) {
-                $this->insertId = $this->conn->lastInsertId();
+    // protected function exec($sql) {
+    //     $num = $this->conn->exec($sql);
+    //     if ($num > 0) {
+    //         // 如果是新增的操作
+    //         if (null != $this->conn->lastInsertId()) {
+    //             $this->insertId = $this->conn->lastInsertId();
+    //         }
+
+    //         $this->num = $num;
+    //     } else {
+    //             $error = $this->conn->errorInfo(); // [0] 错误标识符 [1]错误代码 [2]错误信息
+    //             echo json_encode([
+    //                 'msg' => '数据库内部错误'
+    //             ]);
+    //             exit;
+    //             // var_dump($error);
+    //     }
+    // }
+
+    /**
+     * 增删改的操作进行prep
+     */
+    protected function exec($tableName, $data, $type) {
+        try {
+            $execData = array();
+            if ($type == "insert") {
+                $sql = "INSERT INTO {$tableName}";
+                $count = 0;
+                $params = "";
+                $values = "";
+                foreach($data as $k => $value) {
+                    if ($count == 0) {
+                        $params .= "`{$k}`";
+                        $values = ":{$k}";
+                        $execData[":{$k}"] = $value;
+                    } else {
+                        $params .= ",`{$k}`";
+                        $values .= ",:{$k}";
+                        $execData[":{$k}"] = $value;
+                    }
+                    $count++;
+                }
+               
+                $sql .= "({$params}) VALUES ({$values})";
+            }
+    
+            if ($type == "update") {
+    
+            }
+    
+            if ($type == "delete") {
+    
             }
 
-            $this->num = $num;
-        } else {
-                $error = $this->conn->errorInfo(); // [0] 错误标识符 [1]错误代码 [2]错误信息
+            $execData[":name"] = "dasdas";
+            $execData[":age"] = 13;
+            $execData[":status"] = "0";
+
+            $stmt = $this->conn->prepare($sql);
+            $res = $stmt->execute($execData);
+            if ($res > 0) {
+                if (null != $this->conn->lastInsertId) {
+                    $this->insertId = $this->conn->lastInsertId;
+                }
+                $this->num = $res;
+            } else {
                 echo json_encode([
-                    'msg' => '数据库内部错误'
+                    'msg' => "该操作没有改变数据"
                 ]);
                 exit;
-                // var_dump($error);
+            }
+        } catch(PDOException $e) {
+            echo json_encode([
+                'msg' => $e->getMessage()
+            ]);
+            exit;
         }
     }
 
@@ -113,13 +177,18 @@ class Db{
     /**
      * 封装一下插入的操作
      */
-    public function add($sql) {
-        $this->exec($sql);
+    public function add($tableName, $data) {
+        $this->exec($tableName, $data, "insert");
         return $this->insertId;
     }
 
-    public function save($sql) {
-        $this->exec($sql);
+    public function save($tableName, $data) {
+        $this->exec($tableName, $data, "update");
+        return $this->num;
+    }
+
+    public function delete($tableName, $data) {
+        $this->exec($tableName, $data, "delete");
         return $this->num;
     }
 }

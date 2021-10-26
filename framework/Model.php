@@ -5,7 +5,7 @@
  * @Author: SunDuncan
  * @Date: 2021-09-25 16:42:24
  * @LastEditors: SunDuncan
- * @LastEditTime: 2021-10-26 12:47:56
+ * @LastEditTime: 2021-10-26 18:39:48
  */
 /**
  * Author: SunDuncan
@@ -58,22 +58,8 @@ class Model {
         if (count($data) < 1) {
             return false;
         }
-
-        $count = 0;
-        $sql = "INSERT INTO {$this->tableName}";
-        foreach ($data as $k => $value) {
-            if ($count == 0) {
-                $sql .= " set `{$k}` = '{$value}'";
-            } 
-
-            if ($count > 0) {
-                $sql .= ",`{$k}` = '{$value}'";
-            }
-
-            $count++;
-        }
-        
-        return $this->dB->add($sql);
+    
+        return $this->dB->add($this->tableName, $data);
     }
 
     public function save($data, $where) {

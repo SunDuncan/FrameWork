@@ -5,7 +5,7 @@
  * @Author: SunDuncan
  * @Date: 2021-09-25 13:28:59
  * @LastEditors: SunDuncan
- * @LastEditTime: 2021-10-26 15:26:37
+ * @LastEditTime: 2021-10-26 18:38:31
  */
 /**
  * Author: SunDuncan
@@ -16,10 +16,10 @@
 return array(
     // 数据库的配置
     "db" => [
-        "host" => getenv("DB_HOST"),
-        "user" => getenv("DB_USER"), // 默认的用户名
-        "pass" => getenv("DB_PWD"), // 默认的密码
-        "dbname" => getenv("DB_NAME")
+        "host" => getenv("DB_HOST") ? getenv("DB_HOST") : "localhost:8889",
+        "user" => getenv("DB_USER") ? getenv("DB_USER") : "root", // 默认的用户名
+        "pass" => getenv("DB_PWD") ? getenv("DB_PWD") : "root", // 默认的密码
+        "dbname" => getenv("DB_NAME") ? getenv("DB_NAME") : "local_user"
      ],
 
     // 应用的整体配置

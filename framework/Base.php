@@ -5,7 +5,7 @@
  * @Author: SunDuncan
  * @Date: 2021-09-25 13:30:33
  * @LastEditors: SunDuncan
- * @LastEditTime: 2021-10-26 15:28:51
+ * @LastEditTime: 2021-10-26 18:58:55
  */
 /**
  * Author: SunDuncan
@@ -96,6 +96,7 @@
         //     exit();
         // }
         // 这边来解析路由
+
         if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO']) {
             $path_info_array = explode("/", $_SERVER['PATH_INFO']);
             if (count($path_info_array) < 3) {
@@ -111,23 +112,20 @@
             $defModule = $GLOBALS['config']['app']['default_module'];
             $s = isset($_GET['s']) ? $_GET['s'] : $defModule;
             $base_url_array = explode("/", $s);
+            
             if ($base_url_array[0]) {
                 define("PLATFORM", $base_url_array[0]);
                 // 当前控制器
                 define("CONTROLLER", ucwords($base_url_array[1]));
                 // 当前的方法
                 define("ACTION", $base_url_array[2]);
-            }
-
-            if ($base_url_array[1] == "index.php") {
+            } else if ($base_url_array[1] == "index.php") {
                 define("PLATFORM", $base_url_array[2]);
                 // 当前控制器
                 define("CONTROLLER", ucwords($base_url_array[3]));
                 // 当前的方法
                 define("ACTION", $base_url_array[4]);
-            }
-
-            if ($base_url_array[1] != "index.php") {
+            } else {
                 define("PLATFORM", $base_url_array[1]);
                 // 当前控制器
                 define("CONTROLLER", ucwords($base_url_array[2]));
