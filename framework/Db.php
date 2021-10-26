@@ -79,15 +79,18 @@ class Db{
         $num = $this->conn->exec($sql);
         if ($num > 0) {
             // 如果是新增的操作
-            if (null == $this->conn->lastInsertId()) {
+            if (null != $this->conn->lastInsertId()) {
                 $this->insertId = $this->conn->lastInsertId();
             }
 
             $this->num = $num;
         } else {
                 $error = $this->conn->errorInfo(); // [0] 错误标识符 [1]错误代码 [2]错误信息
-                // print "操作失败" . $error[0] . ":" . $error[1] . ":" $error[2];
-                var_dump($error);
+                echo json_encode([
+                    'msg' => '数据库内部错误'
+                ]);
+                exit;
+                // var_dump($error);
         }
     }
 
@@ -113,5 +116,10 @@ class Db{
     public function add($sql) {
         $this->exec($sql);
         return $this->insertId;
+    }
+
+    public function save($sql) {
+        $this->exec($sql);
+        return $this->num;
     }
 }

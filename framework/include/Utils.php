@@ -5,7 +5,7 @@
  * @Author: SunDuncan
  * @Date: 2021-10-15 18:19:46
  * @LastEditors: SunDuncan
- * @LastEditTime: 2021-10-19 18:22:52
+ * @LastEditTime: 2021-10-26 13:12:09
  */
 class Utils {
     /**
@@ -472,5 +472,45 @@ class Utils {
 		    }
 	    }
 	    return implode('',$result);
+    }
+
+
+    public static function creatOrderNo($only = "") {
+        $yCode = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J');
+        $guid = '';
+        $uid = uniqid("", true);
+        $data = rand(1, 1000);
+        if (isset($_SERVER['REQUEST_TIME']))
+        {
+            $data .= $_SERVER['REQUEST_TIME'];
+        }
+        if (isset($_SERVER['HTTP_USER_AGENT']))
+        {
+            $data .= $_SERVER['HTTP_USER_AGENT'];
+        }
+        if (isset($_SERVER['LOCAL_ADDR']))
+        {
+            $data .= $_SERVER['LOCAL_ADDR'];
+        }
+        if (isset($_SERVER['LOCAL_PORT']))
+        {
+            $data .= $_SERVER['LOCAL_PORT'];
+        }
+        if (isset($_SERVER['REMOTE_ADDR']))
+        {
+            $data .= $_SERVER['REMOTE_ADDR'];
+        }
+        if (isset($_SERVER['REMOTE_PORT']))
+        {
+            $data .= $_SERVER['REMOTE_PORT'];
+        }
+      
+        $hash = strtoupper(hash('ripemd128', $uid . $guid . md5($data)));
+        $guid = 
+            substr($hash, 0, 8) .
+            substr($hash, 8, 4) .
+            substr($hash, 12, 5) .
+            substr($hash, 20, 12);
+        return $guid;
     }
 }

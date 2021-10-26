@@ -5,7 +5,7 @@
  * @Author: SunDuncan
  * @Date: 2021-09-25 16:42:24
  * @LastEditors: SunDuncan
- * @LastEditTime: 2021-10-19 16:28:18
+ * @LastEditTime: 2021-10-26 12:47:56
  */
 /**
  * Author: SunDuncan
@@ -32,8 +32,21 @@ class Model {
         return $this->dB->fetchAll($sql);
     }
 
-    public function find($id, $where = [], $limit = "", $order = "") {
-        $sql = "SELECT *from {$this->tableName} where id = {$id}";
+    public function find($where = [], $field = "*",  $limit = "", $order = "", $like = []) {
+        if ($where) {
+            $sql = "SELECT {$field} from {$this->tableName}";
+            $where_count = 0;
+            foreach($where as $k => $v) {
+                if ($where_count == 0) {
+                    $sql .= " where {$k} = '{$v}'";   
+                }
+
+                if ($where_count != 0) {
+                    $sql .= " and {$k} = '{$v}'";   
+                }
+                $where_count++;
+            }
+        } 
         return $this->dB->fetch($sql);
     }
 
@@ -50,16 +63,55 @@ class Model {
         $sql = "INSERT INTO {$this->tableName}";
         foreach ($data as $k => $value) {
             if ($count == 0) {
-                $sql .= " set `{$k}` = {$value}";
+                $sql .= " set `{$k}` = '{$value}'";
             } 
 
             if ($count > 0) {
-                $sql .= ",set `{$k}` = {$value}";
+                $sql .= ",`{$k}` = '{$value}'";
             }
 
             $count++;
         }
+        
         return $this->dB->add($sql);
+    }
+
+    public function save($data, $where) {
+        if (!is_array($data)) {
+            return false;
+        }
+
+        if (count($data) < 1) {
+            return false;
+        }
+
+        $count = 0;
+        $sql = "UPDATE {$this->tableName}";
+        foreach ($data as $k => $value) {
+            if ($count == 0) {
+                $sql .= " set `{$k}` = '{$value}'";
+            } 
+
+            if ($count > 0) {
+                $sql .= ",`{$k}` = '{$value}'";
+            }
+
+            $count++;
+        }
+        
+        $coun = 0;
+        foreach ($where as $kk => $vv) {
+            if ($coun == 0){
+                $sql .= " where `{$kk}` = '{$vv}'";
+            }
+
+            if ($count > 0) {
+                $sql .= "and `{$kk}` = '{$vv}'";
+            }
+
+            $coun++;
+        }
+        return $this->dB->save($sql);
     }
 }
 
