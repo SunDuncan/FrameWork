@@ -5,7 +5,7 @@
  * @Author: SunDuncan
  * @Date: 2021-09-25 13:30:33
  * @LastEditors: SunDuncan
- * @LastEditTime: 2021-10-26 18:58:55
+ * @LastEditTime: 2021-10-27 17:44:24
  */
 /**
  * Author: SunDuncan
@@ -32,7 +32,7 @@
      }
 
      private function loadConfig() {
-         $GLOBALS['config'] = require "./application/config/config.php";
+         $GLOBALS['config'] = require_once("./application/config/config.php");
      }
 
     // 创建用户自定义类的加载类
@@ -52,13 +52,14 @@
         $platForm = PLATFORM;
         // 判断这个类是 基本类？模型类？控制类
         if (isset($baseClass[$className])) {
-            require $baseClass[$className];
+            require_once($baseClass[$className]);
         } else if (substr($className, -5) == "Model") {
-            require "./application/{$platForm}/model/" . $className . ".php";
+            require_once("./application/{$platForm}/model/" . $className . ".php");
         } else if (substr($className, -10) == "Controller") {
-            require "./application/{$platForm}/controller/" . $className . ".php";
+            require_once("./application/{$platForm}/controller/" . $className . ".php");
         } else {
-            die("该文件" . $className . "没有找到");
+            echo json_encode("该文件" . $className . "没有找到");
+            die();
         }
     }
 

@@ -132,7 +132,12 @@ class Db{
             }
             $count++;
         }
-        $sql .= $params . " where " . $wheres;
+
+        if (!$wheres) {
+            $sql .= $params . " where " . $wheres;
+        } else {
+            $sql .= $params;
+        }
         return [
             'sql' => $sql,
             'execData' => $execData
@@ -140,7 +145,26 @@ class Db{
     }
 
     private function createDeleteSql($tableName, $where) {
-
+        $count = 0;
+        $wheres = "";
+        $sql = "DELETE FROM {$tableName} ";
+        foreach($where as $kk => $vv) {
+            if ($count == 0 ){
+                $wheres .= "`{$kk}` = :where{$kk}";
+                $execData[":where{$kk}"]= $vv;
+            } else {
+                $wheres .= "and `{$kk}` = :where{$kk}";
+                $execData[":where{$kk}"]= $vv;
+            }
+            $count++;
+        }
+        if ($wheres) {
+            $sql .= " where " . $wheres;
+        }
+        return [
+            'sql' => $sql,
+            'execData' => $execData
+        ];
     }
     /**
      * 增删改的操作进行prep
@@ -164,22 +188,11 @@ class Db{
             }
     
             if ($type == "delete") {
-                $count = 0;
-                $wheres = "";
-                $sql = "DELETE FROM {$tableName} ";
-                foreach($where as $kk => $vv) {
-                    if ($count == 0 ){
-                        $wheres .= "`{$kk}` = :where{$kk}";
-                        $execData[":where{$kk}"]= $vv;
-                    } else {
-                        $wheres .= "and `{$kk}` = :where{$kk}";
-                        $execData[":where{$kk}"]= $vv;
-                    }
-                    $count++;
-                }
-                $sql .= " where " . $wheres;
+                $result = $this->createDeleteSql($tableName, $where);
+                $sql = $result['sql'];
+                $execData = $result['execData'];
             }
-
+           
             $stmt = $this->conn->prepare($sql);
             $res = $stmt->execute($execData);
             if ($res > 0) {
