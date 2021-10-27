@@ -4,7 +4,7 @@
  * @Author: SunDuncan
  * @Date: 2021-09-25 18:46:59
  * @LastEditors: SunDuncan
- * @LastEditTime: 2021-10-15 17:51:27
+ * @LastEditTime: 2021-10-27 18:29:07
 -->
 # 后台框架
 ## 序言
@@ -15,26 +15,35 @@
 ## 目录结构
 
 ```
-teownFramework
+FrameWork
 ├── README.md
-├── application // 业务逻辑目录
-│   ├── api     // 接口目录
-│   │   ├── Controller // 控制器
-│   │   │   ├── IndexController.php //默认控制器
-│   │   │   └── UserController.php 
-│   │   └── Model
-│   │       ├── IndexModel.php // 默认模型
-│   │       └── UserModel.php 
-│   └── config
-│       └── config.php  // 公共配置
-├── framework // 框架核心
+├── application    // 业务逻辑目录
+│   ├── admin-ui   // 后台的页面
+│   │   └── vue-element-admin
+│   ├── api       // 接口目录
+│   │   ├── Controller  // 控制器层
+│   │   └── Model // 数据model层
+│   ├── config
+│   │   └── config.php  //所有引入的配置文件
+│   ├── sql  // 创建必要库的sql文件
+│   └── wechat // 封装的微信的一些方法
+│       ├── controller
+│       └── model
+├── framework   //框架核心部分
 │   ├── Base.php // 基类，自动加载，请求分发
 │   ├── Controller.php // 集成控制类
-│   ├── Db.php // 单例数据库
+│   ├── Db.php // 单例数据库，主要封装数据库的一些底层操作
 │   ├── Model.php // 集成模型
-│   └── include // 公共工具
-│       └── Output.php // 输出工具
-├── index.php // 框架入口文件
+│   ├── Rd.php  // Redis的底层封装 //这边待修改，以后也需要改成单例的模式
+│   └── include // 一些集成的工具类
+│       ├── Output.php // 返回的规范
+│       ├── Utils.php  // 工具类
+│       ├── WechatApi.php // 微信的api
+│       ├── aliMessage   // 阿里短信的实体类
+│       └── wxPay1   // 微信的支付的封装
+└── index.php // 项目总的入口文件
+
+
 ```
 ## 使用
 
@@ -78,6 +87,59 @@ teownFramework
 		set $real_script_name $1;
 		set $path_info $2;
 	}
+```
+
+## 数据库
+### 模型定义
+1. 定义一个User模型
+```
+      <?php
+      class UserModel extends Model {
+            protected $tableName = "user"; // 数据库的表 // 对应的就是数据库中的user表
+      }
+```
+2. 模型调用
+```
+      // 目前仅支持实例化调用
+      $user = new UserModel;
+      $user->save();
+```
+
+### 新增
+1. 添加一条数据
+```
+      $user           = new UserModel;
+      $data           = array();
+      $data['name']   = 'duncan';
+      $data['age']    = 1;
+      $res            = $user->add($data); // $res 为自增的id
+      // 如果数据错误会抛出pdo异常
+      
+```
+2. 批量新增
+```
+      // 正在待开发中
+```
+
+### 更新
+1. 更新数据
+```
+      $user           = new UserModel;
+      $data           = array();
+      $data['name']   = 'duncan';
+      $data['age']    = 1;
+      $where['id']    = 1;
+      $res            = $user->where($where)->save($data); // $res 为自增的受影响的行数 
+      // 如果数据错误会抛出pdo异常
+
+```
+
+### 删除
+```
+      $user           = new UserModel;
+      $where['id']    = 1;
+      $res            = $user->where($where)->delete(); // $res 为自增的受影响的行数 
+      // 如果数据错误会抛出pdo异常
 ```
 
 
