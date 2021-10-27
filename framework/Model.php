@@ -5,7 +5,7 @@
  * @Author: SunDuncan
  * @Date: 2021-09-25 16:42:24
  * @LastEditors: SunDuncan
- * @LastEditTime: 2021-10-26 18:39:48
+ * @LastEditTime: 2021-10-27 16:02:42
  */
 /**
  * Author: SunDuncan
@@ -71,33 +71,29 @@ class Model {
             return false;
         }
 
-        $count = 0;
-        $sql = "UPDATE {$this->tableName}";
-        foreach ($data as $k => $value) {
-            if ($count == 0) {
-                $sql .= " set `{$k}` = '{$value}'";
-            } 
+        return $this->dB->save($this->tableName, $data, $where);
+    }
 
-            if ($count > 0) {
-                $sql .= ",`{$k}` = '{$value}'";
-            }
 
-            $count++;
+    public function delete($where) {
+        if (count($where) < 1) {
+            return false;
         }
-        
-        $coun = 0;
-        foreach ($where as $kk => $vv) {
-            if ($coun == 0){
-                $sql .= " where `{$kk}` = '{$vv}'";
-            }
 
-            if ($count > 0) {
-                $sql .= "and `{$kk}` = '{$vv}'";
-            }
+        return $this->dB->delete($this->tableName, $where);
+    }
 
-            $coun++;
-        }
-        return $this->dB->save($sql);
+    public function startTransaction() {
+        $this->dB->startTransaction();
+    }
+
+
+    public function commit() {
+        $this->db->commit();
+    }
+
+    public function rollback() {
+        $this->db->rollback();
     }
 }
 

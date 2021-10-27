@@ -77,60 +77,107 @@ class Db{
 
     // 写操作
     /**
-     * 新增，更新，删除
+     * 生成insert的Sql
      */
-    // protected function exec($sql) {
-    //     $num = $this->conn->exec($sql);
-    //     if ($num > 0) {
-    //         // 如果是新增的操作
-    //         if (null != $this->conn->lastInsertId()) {
-    //             $this->insertId = $this->conn->lastInsertId();
-    //         }
+    private function createInsertSql($tableName, $data) {
+        $execData = array();
+        $sql = "INSERT INTO {$tableName}";
+        $count = 0;
+        $params = "";
+        $values = "";
+        foreach($data as $k => $value) {
+            if ($count == 0) {
+                $params .= "`{$k}`";
+                $values = ":{$k}";
+                $execData[":{$k}"] = $value;
+            } else {
+                $params .= ",`{$k}`";
+                $values .= ",:{$k}";
+                $execData[":{$k}"] = $value;
+            }
+            $count++;
+        }
+       
+        $sql .= "({$params}) VALUES ({$values})";
+        return [
+            'sql' => $sql,
+            'execData' => $execData
+        ];
+    }
 
-    //         $this->num = $num;
-    //     } else {
-    //             $error = $this->conn->errorInfo(); // [0] 错误标识符 [1]错误代码 [2]错误信息
-    //             echo json_encode([
-    //                 'msg' => '数据库内部错误'
-    //             ]);
-    //             exit;
-    //             // var_dump($error);
-    //     }
-    // }
+    private function createUpdateSql($tableName, $data, $where) {
+        $sql = "UPDATE {$tableName} set ";
+        $execData = array();
+        $params = "";
+        $wheres = "";
+        $count = 0;
+        foreach($data as $k => $value) {
+            if ($count == 0 ){
+                $params .= "`{$k}` = :{$k}";
+                $execData[":{$k}"]= $value;
+            } else {
+                $params .= ",`{$k}` = :{$k}";
+                $execData[":{$k}"]= $value;
+            }
+            $count++;
+        }
+        $count = 0;
+        foreach($where as $kk => $vv) {
+            if ($count == 0 ){
+                $wheres .= "`{$kk}` = :where{$kk}";
+                $execData[":where{$kk}"]= $vv;
+            } else {
+                $wheres .= "and `{$kk}` = :where{$kk}";
+                $execData[":where{$kk}"]= $vv;
+            }
+            $count++;
+        }
+        $sql .= $params . " where " . $wheres;
+        return [
+            'sql' => $sql,
+            'execData' => $execData
+        ];
+    }
 
+    private function createDeleteSql($tableName, $where) {
+
+    }
     /**
      * 增删改的操作进行prep
      */
-    protected function exec($tableName, $data, $type) {
+    /**
+     * 目前支持and的查询，其他可能待完善
+     */
+    protected function exec($tableName, $data, $type, $where = []) {
         try {
             $execData = array();
             if ($type == "insert") {
-                $sql = "INSERT INTO {$tableName}";
-                $count = 0;
-                $params = "";
-                $values = "";
-                foreach($data as $k => $value) {
-                    if ($count == 0) {
-                        $params .= "`{$k}`";
-                        $values = ":{$k}";
-                        $execData[":{$k}"] = $value;
-                    } else {
-                        $params .= ",`{$k}`";
-                        $values .= ",:{$k}";
-                        $execData[":{$k}"] = $value;
-                    }
-                    $count++;
-                }
-               
-                $sql .= "({$params}) VALUES ({$values})";
+                $result = $this->createInsertSql($tableName, $data);
+                $sql = $result['sql'];
+                $execData = $result['execData'];
             }
     
             if ($type == "update") {
-    
+                $result = $this->createUpdateSql($tableName, $data, $where);
+                $sql = $result['sql'];
+                $execData = $result['execData'];
             }
     
             if ($type == "delete") {
-    
+                $count = 0;
+                $wheres = "";
+                $sql = "DELETE FROM {$tableName} ";
+                foreach($where as $kk => $vv) {
+                    if ($count == 0 ){
+                        $wheres .= "`{$kk}` = :where{$kk}";
+                        $execData[":where{$kk}"]= $vv;
+                    } else {
+                        $wheres .= "and `{$kk}` = :where{$kk}";
+                        $execData[":where{$kk}"]= $vv;
+                    }
+                    $count++;
+                }
+                $sql .= " where " . $wheres;
             }
 
             $stmt = $this->conn->prepare($sql);
@@ -139,7 +186,7 @@ class Db{
                 if (null != $this->conn->lastInsertId()) {
                     $this->insertId = $this->conn->lastInsertId();
                 }
-                $this->num = $res;
+                $this->num = $stmt->rowCount();
             } else {
                 echo json_encode([
                     'msg' => "该操作没有改变数据"
@@ -178,13 +225,29 @@ class Db{
         return $this->insertId;
     }
 
-    public function save($tableName, $data) {
-        $this->exec($tableName, $data, "update");
+    public function save($tableName, $data, $where = []) {
+        $this->exec($tableName, $data, "update", $where);
         return $this->num;
     }
 
-    public function delete($tableName, $data) {
-        $this->exec($tableName, $data, "delete");
+    public function delete($tableName, $where = []) {
+        $this->exec($tableName, [], "delete", $where);
         return $this->num;
+    }
+
+    /**
+     * 开启事务
+     */
+    public function startTransaction() {
+        $this->conn->beginTransaction();
+    }
+
+
+    public function commit() {
+        $this->conn->commit();
+    }
+
+    public function rollback() {
+        $this->conn->rollBack();
     }
 }

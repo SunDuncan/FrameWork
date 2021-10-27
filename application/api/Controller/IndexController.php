@@ -5,7 +5,7 @@
  * @Author: SunDuncan
  * @Date: 2021-09-25 16:14:42
  * @LastEditors: SunDuncan
- * @LastEditTime: 2021-10-26 19:16:13
+ * @LastEditTime: 2021-10-27 16:03:04
  */
 
 class IndexController extends Controller{
@@ -15,11 +15,11 @@ class IndexController extends Controller{
 
     public function addUser() {
         $userModel = new UserModel();
-        $res = $userModel->add([
-            "name" => 's',
-            'age' => 1,
-            'status' => 0
-        ]);
+        $res = $userModel->delete(
+            [
+                'age' => 1
+            ]
+        );
 
         echo $res;
     }
