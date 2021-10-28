@@ -5,7 +5,7 @@
  * @Author: SunDuncan
  * @Date: 2021-09-25 16:42:24
  * @LastEditors: SunDuncan
- * @LastEditTime: 2021-10-27 17:44:00
+ * @LastEditTime: 2021-10-28 19:18:11
  */
 /**
  * Author: SunDuncan
@@ -125,11 +125,11 @@ class Model {
 
 
     public function commit() {
-        $this->db->commit();
+        $this->dB->commit();
     }
 
     public function rollback() {
-        $this->db->rollback();
+        $this->dB->rollback();
     }
 }
 
