@@ -5,7 +5,7 @@
  * @Author: SunDuncan
  * @Date: 2021-09-25 16:42:24
  * @LastEditors: SunDuncan
- * @LastEditTime: 2021-10-28 19:18:11
+ * @LastEditTime: 2021-10-29 00:01:18
  */
 /**
  * Author: SunDuncan
@@ -122,7 +122,6 @@ class Model {
     public function startTransaction() {
         $this->dB->startTransaction();
     }
-
 
     public function commit() {
         $this->dB->commit();

@@ -255,11 +255,16 @@ class Db{
         $this->conn->beginTransaction();
     }
 
-
+    /**
+     * 提交事务
+     */
     public function commit() {
         $this->conn->commit();
     }
 
+    /**
+     * 提交回滚
+     */
     public function rollback() {
         $this->conn->rollBack();
     }
