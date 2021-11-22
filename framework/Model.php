@@ -5,7 +5,7 @@
  * @Author: SunDuncan
  * @Date: 2021-09-25 16:42:24
  * @LastEditors: SunDuncan
- * @LastEditTime: 2021-10-29 00:01:18
+ * @LastEditTime: 2021-11-22 17:25:41
  */
 /**
  * Author: SunDuncan
@@ -74,17 +74,9 @@ class Model {
      */
     public function find($where = [], $field = "*",  $limit = "", $order = "", $like = []) {
         if ($where) {
-            $sql = "SELECT {$field} from {$this->tableName}";
-            $where_count = 0;
+            $sql = "SELECT {$field} from {$this->tableName} where 1 = 1";
             foreach($where as $k => $v) {
-                if ($where_count == 0) {
-                    $sql .= " where {$k} = '{$v}'";   
-                }
-
-                if ($where_count != 0) {
-                    $sql .= " and {$k} = '{$v}'";   
-                }
-                $where_count++;
+                $sql .= " and {$k} = '{$v}'";   
             }
         } 
         return $this->dB->fetch($sql);
